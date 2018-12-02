@@ -1,11 +1,14 @@
 #!/bin/bash
 
-IMAGE=csmith/aoc-2018
+IMAGE=csmith/aoc-2018-01
 
-echo "Building docker image..."
-docker build . -t $IMAGE
+docker image inspect $IMAGE >/dev/null 2>&1
+if [ $? -ne 0 ]
+then
+    echo "One time setup: building docker image..."
+    cd docker
+    docker build . -t $IMAGE
+    cd ..
+fi
 
-echo "To manually run without rebuilding:"
-echo "   docker run --rm -it $IMAGE /entrypoint.sh $@"
-
-docker run --rm -it $IMAGE /entrypoint.sh $@
+docker run --rm -it -v $(pwd):/code $IMAGE /entrypoint.sh $@
