@@ -13,8 +13,7 @@ with open('2018.ipynb', 'r') as f:
             else:
                 if day not in days:
                     days[day] = common
-                days[day] += ''.join(cell['source'][:-1])
-                days[day] += f"print({cell['source'][-1]})\n\n"
+                days[day] += ''.join(cell['source']) + '\n\n'
 
     for day, code in days.items():
         with open(f"{day:02}.py", "w") as py:
