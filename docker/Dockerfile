@@ -1,6 +1,4 @@
-FROM pypy:3
-
-RUN pip3 install numpy
+FROM pypy:3-slim
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
