@@ -1,4 +1,10 @@
 #!/bin/bash
 
 cd /code
-time pypy3 ${1:-$(find -regex './[0-9]+.py' | sort | tail -n 1)}
+
+if [ -f "day$1.nim" ]; then
+    HOME=/tmp nim c --opt:speed -d:release day$1.nim >/dev/null 2>&1
+    time ./day$1
+else
+    time pypy "$1.py"
+fi
