@@ -1,13 +1,14 @@
 import intsets, math, sequtils, strutils
 
-let input = readFile("data/01.txt").splitLines.filter(proc(x: string): bool = x != "").map(parseInt)
+let input = readFile("data/01.txt").strip.splitLines.map(parseInt)
 
 proc part1(freqs: seq[int]): int =
     freqs.sum
 
 proc part2(freqs: seq[int]): int =
-    var seen = initIntSet()
-    var talley: int
+    var
+        seen = initIntSet()
+        talley: int
 
     while true:
         for n in freqs:
