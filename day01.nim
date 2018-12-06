@@ -1,6 +1,6 @@
 import intsets, math, sequtils, strutils
 
-let input = readFile("data/01.txt").splitLines.map(parseInt)
+let input = readFile("data/01.txt").splitLines.filter(proc(x: string): bool = x != "").map(parseInt)
 
 proc part1(freqs: seq[int]): int =
     freqs.sum
