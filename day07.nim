@@ -30,31 +30,33 @@ func part2(dependencies: array[26, array[27, bool]]): int =
         task_times: array[26, int]
         completed = ""
         time = 0
+        step = 0
 
     status.deepCopy(dependencies)
 
     while len(completed) < 26:
-        time += 1
+        time += step
+        step = int.high
+
         for i in 0..25:
-            if task_times[i] == 1:
-                task_times[i] = 0
-                completed &= chr(i + 65)
-                status.addr.execute(i)
-            elif task_times[i] > 1:
-                task_times[i] -= 1
+            if task_times[i] > 0: 
+                if task_times[i] <= time:
+                    task_times[i] = 0
+                    completed &= chr(i + 65)
+                    status.addr.execute(i)
+                else:
+                    step = min(step, task_times[i] - time)
 
         for i in 0..4:
-            if worker_times[i] > 0:
-                worker_times[i] -= 1
-            
-            if worker_times[i] == 0:
+            if worker_times[i] <= time:
                 var task = status.next_task
                 if task > -1:
-                    worker_times[i] = 61 + task
-                    task_times[task] = 61 + task
+                    worker_times[i] = time + 61 + task
+                    task_times[task] = time + 61 + task
                     status[task][0] = true
+                    step = min(step, 61 + task)
 
-    time - 1
+    time
 
 echo dependencies.part1
 echo dependencies.part2
