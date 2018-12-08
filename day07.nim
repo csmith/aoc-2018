@@ -10,7 +10,7 @@ func next_task(status: array[26, array[27, bool]]): int =
     var falses: array[27, bool]
     status.find(falses)
 
-func execute(status: ptr array[26, array[27, bool]], action: int) =
+func execute(status: var array[26, array[27, bool]], action: int) =
     status[action][0] = true
     for i in 0..25:
         status[i][action + 1] = false
@@ -20,7 +20,7 @@ func part1(dependencies: array[26, array[27, bool]]): string =
     status.deepCopy(dependencies)
     for i in 0..25:
         var task = status.next_task
-        status.addr.execute(task)
+        status.execute(task)
         result &= chr(task + 65)
 
 func part2(dependencies: array[26, array[27, bool]]): int =
@@ -43,7 +43,7 @@ func part2(dependencies: array[26, array[27, bool]]): int =
                 if task_times[i] <= time:
                     task_times[i] = 0
                     completed &= chr(i + 65)
-                    status.addr.execute(i)
+                    status.execute(i)
                 else:
                     step = min(step, task_times[i] - time)
 
