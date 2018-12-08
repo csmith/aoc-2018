@@ -27,29 +27,24 @@ func nearest(coords: seq[Point], point: Point): int =
     else:
         -1
 
-func inrange(coords: seq[Point], point: Point): bool = coords.map(proc (coord: Point): int =
-    coord.distance(point)).sum < 10000
+func inrange(coords: seq[Point], point: Point): bool =
+    coords.map(proc (coord: Point): int = coord.distance(point)).sum < 10000
 
 func part1(coords: seq[Point], extents: array[4, int]): int =
-    var
-        counts = newSeqWith(coords.len, 0)
-        excluded = newSeqWith(coords.len, false)
+    var counts = newSeqWith(coords.len, 0)
 
     for x in extents[0] .. extents[1]:
         for y in extents[2] .. extents[3]:
             let coord = coords.nearest([x, y])
-            if coord != -1:
+            if coord != -1 and counts[coord] > -1:
                 counts[coord].inc
                 
                 # If the area reaches the edge of the grid, it will continue infinitely.
                 # Mark that area as excluded.
                 if x == extents[0] or x == extents[1] or y == extents[2] or y == extents[3]:
-                    excluded[coord] = true
+                    counts[coord] = -1
 
-    zip(counts, excluded)
-            .filter(proc(x: tuple[a: int, b: bool]): bool = not x.b)
-            .map(proc(x: tuple[a: int, b: bool]): int = x.a)
-            .max
+    counts.max
 
 func part2(coords: seq[Point], extents: array[4, int]): int =
     var
@@ -68,7 +63,7 @@ func part2(coords: seq[Point], extents: array[4, int]): int =
             min_y = int.high
             max_y = int.high
 
-        for y in extents[2] - extension .. extents[3] + extension:
+        for y in y_start .. y_finish:
             if coords.inrange([x,y]):
                 if min_y == int.high:
                     min_y = y
