@@ -22,7 +22,10 @@ func nearest(coords: seq[Point], point: Point): int =
         distances = coords.map(proc(coord: Point): int = coord.distance(point))
         lowest = min(distances)
         lowest_count = distances.filter(proc (distance: int): bool = distance == lowest).len
-    if lowest_count == 1: distances.find(lowest) else: -1
+    if lowest_count == 1:
+        distances.find(lowest)
+    else:
+        -1
 
 func inrange(coords: seq[Point], point: Point): bool = coords.map(proc (coord: Point): int =
     coord.distance(point)).sum < 10000
@@ -36,7 +39,7 @@ func part1(coords: seq[Point], extents: array[4, int]): int =
         for y in extents[2] .. extents[3]:
             let coord = coords.nearest([x, y])
             if coord != -1:
-                counts[coord] += 1
+                counts[coord].inc
                 
                 # If the area reaches the edge of the grid, it will continue infinitely.
                 # Mark that area as excluded.

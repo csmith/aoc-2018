@@ -8,10 +8,10 @@ func react(polymer: seq[char], skip: char): seq[char] =
         if count > 0:
             if (ord(c) xor ord(result[count - 1])) == 32:
                 result.delete(count - 1)
-                count -= 1
+                count.dec
                 continue
         result.add(c)
-        count += 1
+        count.inc
 
 let polymer = toSeq(readFile("data/05.txt").strip.items).react(' ')
 
