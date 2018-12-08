@@ -1,6 +1,6 @@
 import sequtils, strutils
 
-proc react(polymer: seq[char], skip: char): seq[char] =
+func react(polymer: seq[char], skip: char): seq[char] =
     var count = 0
     for c in polymer:
         if c == skip or (ord(c) xor ord(skip)) == 32:

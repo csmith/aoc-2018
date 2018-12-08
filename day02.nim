@@ -1,6 +1,6 @@
 import sequtils, strutils
 
-proc checksum(ids: seq[string]): int =
+func checksum(ids: seq[string]): int =
     var pairCount, tripCount: int
     for id in ids:
         var pairs, trips: bool
@@ -16,7 +16,7 @@ proc checksum(ids: seq[string]): int =
                 break
     pairCount * tripCount
 
-proc difference(pairs: seq[tuple[a: char, b: char]]): string =
+func difference(pairs: seq[tuple[a: char, b: char]]): string =
     var difference: bool
     for pair in pairs:
         if pair.a != pair.b:
@@ -27,7 +27,7 @@ proc difference(pairs: seq[tuple[a: char, b: char]]): string =
         else:
             result &= pair.a
 
-proc max_common(ids: seq[string]): string =
+func max_common(ids: seq[string]): string =
     for i, id1 in ids:
         for id2 in ids[i+1 .. ids.high]:
             let difference = zip(id1, id2).difference

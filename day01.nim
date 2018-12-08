@@ -2,10 +2,10 @@ import intsets, math, sequtils, strutils
 
 let input = readFile("data/01.txt").strip.splitLines.map(parseInt)
 
-proc part1(freqs: seq[int]): int =
+func part1(freqs: seq[int]): int =
     freqs.sum
 
-proc part2(freqs: seq[int]): int =
+func part2(freqs: seq[int]): int =
     var
         seen = initIntSet()
         talley: int
