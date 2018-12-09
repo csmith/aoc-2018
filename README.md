@@ -1,7 +1,6 @@
 # Advent of Code 2018
 
-This repository contains my solution to 2018's [Advent of Code](https://adventofcode.com/2018) puzzles. The solutions
-are a mixture of Python 3 and Nim.
+This repository contains my solution to 2018's [Advent of Code](https://adventofcode.com/2018) puzzles in Nim.
 
 The easiest way to run these is using docker -- simply execute `run.sh <day>` to build a docker image and execute the
 specific day.
