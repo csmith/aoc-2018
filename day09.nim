@@ -1,4 +1,4 @@
-import lists, math, sequtils, strscans, strutils
+import lists, strscans, strutils
 
 func insertAfter(node: DoublyLinkedNode[int], value: int) =
     var newNode = newDoublyLinkedNode(value)
