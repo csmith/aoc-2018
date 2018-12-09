@@ -28,7 +28,11 @@ func nearest(coords: seq[Point], point: Point): int =
         -1
 
 func inrange(coords: seq[Point], point: Point): bool =
-    coords.map(proc (coord: Point): int = coord.distance(point)).sum < 10000
+    var sum: int
+    for coord in coords:
+        sum += coord.distance(point)
+        if sum >= 10000: return false
+    return true
 
 func part1(coords: seq[Point], extents: array[4, int]): int =
     var counts = newSeqWith(coords.len, 0)
