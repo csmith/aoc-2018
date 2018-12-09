@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE=csmith/aoc-2018-04
+IMAGE=csmith/aoc-2018-05
 
 docker image inspect $IMAGE >/dev/null 2>&1
 if [ $? -ne 0 ]
