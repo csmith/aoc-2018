@@ -1,27 +1,28 @@
 import strscans
 
+# For performance, we only use pointers to Marbles (and manually allocate)
+# memory required for them. This stops the GC tracking them, saving a fair
+# chunk of time. Removed marbles will leak, but it doesn't really matter for
+# the scope of this program.
+
 type
-    Marble = object
-        next, prev: ptr Marble
+    Marble = ptr object
+        next: Marble
         value: int32
 
-proc insertAfter(node: ptr Marble, value: int) {.inline.} =
-    var newNode = cast[ptr Marble](alloc0(sizeof(Marble)))
+proc insertAfter(node: Marble, value: int) {.inline.} =
+    var newNode = cast[Marble](alloc0(sizeof(Marble)))
     newNode.value = cast[int32](value)
     newNode.next = node.next
-    newNode.prev = node
-    newNode.next.prev = newNode
-    newNode.prev.next = newNode
+    node.next = newNode
 
-proc remove(node: ptr Marble) {.inline.} =
-    node.prev.next = node.next
-    node.next.prev = node.prev
+proc removeNext(node: Marble) {.inline.} =
+    node.next = node.next.next
 
-proc newSingleNode(value: int): ptr Marble =
-    result = cast[ptr Marble](alloc0(sizeof(Marble)))
+proc newSingleNode(value: int): Marble =
+    result = cast[Marble](alloc0(sizeof(Marble)))
     result.value = cast[int32](value)
     result.next = result
-    result.prev = result
 
 var
     input = readFile("data/09.txt")
@@ -31,25 +32,43 @@ var
 if not input.scanf("$i players; last marble is worth $i points", players, marbles):
     raise newException(Defect,  "Invalid input line: " & input)
 
+# Instead of using a doubly-linked list, we keep a current pointer and a
+# separate one trailing behind it. The trail will expand to 8 marbles and is
+# used when a multiple of 23 is played (so we can remove the N-7th marble). The
+# trail then catches up to the current pointer and drifts back to 8 again over
+# the next few moves. This saves a 64 bit memory allocation per marble, which
+# gives a small but noticable speed bump.
+
 var
     player = 0
     scores = newSeq[int](players)
     current = newSingleNode(0)
+    currentTrail = current
+    currentTrailDrift = 0
     specialCountdown = 23
     hundredMarbles = marbles * 100
 
 for i in 1 .. hundredMarbles:
+    # Instead of testing each marble number to see if it's a multiple of 23, we
+    # keep a counter that we just loop over and over again.
     specialCountdown.dec
     if specialCountdown == 0:
-        specialCountdown = 23
+        # The current player is only relevant when a 23nth marble is played, so
+        # we can just update the player here instead of every turn.
         player = (player + 23) mod players
-        current = current.prev.prev.prev.prev.prev.prev.prev
-        scores[player] += i + current.value
-        current.remove
-        current = current.next
+        scores[player] += i + currentTrail.next.value
+        currentTrail.removeNext
+        current = currentTrail.next
+        currentTrail = current
+        currentTrailDrift = 0
+        specialCountdown = 23
     else:
         current.next.insertAfter(i)
         current = current.next.next
+        if currentTrailDrift == 8:
+            currentTrail = currentTrail.next.next
+        else:
+            currentTrailDrift += 2
 
     if i == marbles or i == hundredMarbles:
         echo scores.max
