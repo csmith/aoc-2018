@@ -1,25 +1,25 @@
 import strscans
 
 type
-    Marble = ref object
-        next, prev: Marble
-        value: int
+    Marble = object
+        next, prev: ptr Marble
+        value: int32
 
-func insertAfter(node: Marble, value: int) {.inline.} =
-    var newNode = new(Marble)
-    newNode.value = value
+proc insertAfter(node: ptr Marble, value: int) {.inline.} =
+    var newNode = cast[ptr Marble](alloc0(sizeof(Marble)))
+    newNode.value = cast[int32](value)
     newNode.next = node.next
     newNode.prev = node
     newNode.next.prev = newNode
     newNode.prev.next = newNode
 
-func remove(node: Marble) {.inline.} =
+proc remove(node: ptr Marble) {.inline.} =
     node.prev.next = node.next
     node.next.prev = node.prev
 
-func newSingleNode(value: int): Marble =
-    result = new(Marble)
-    result.value = value
+proc newSingleNode(value: int): ptr Marble =
+    result = cast[ptr Marble](alloc0(sizeof(Marble)))
+    result.value = cast[int32](value)
     result.next = result
     result.prev = result
 
