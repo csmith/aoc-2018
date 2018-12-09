@@ -1,6 +1,4 @@
-FROM nimlang/nim:alpine
-
-RUN apk update && apk add bash
+FROM nimlang/nim:slim
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

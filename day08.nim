@@ -14,7 +14,7 @@ func readNode(input: var seq[string]): tuple[value: int, metasum: int] =
         child_values.add(res.value)
         metasum += res.metasum
 
-    for m in 0..meta_count-1:
+    for m in 0 .. meta_count - 1:
         var v = input.pop.parseInt
         if v > 0 and v <= child_count:
             value += child_values[v - 1]
