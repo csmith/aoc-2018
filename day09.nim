@@ -1,17 +1,23 @@
 import strscans
 
-# For performance, we only use pointers to Marbles (and manually allocate)
-# memory required for them. This stops the GC tracking them, saving a fair
-# chunk of time. Removed marbles will leak, but it doesn't really matter for
-# the scope of this program.
+# For performance, we manually allocate a contiguous region of memory to store
+# all of our marbles in, and manually work out pointer offsets for them within
+# that region based on the marble ID. This is probably a very bad idea for
+# anything other than a performance-obsessed, short-lived program.
 
 type
     Marble = ptr object
         next: Marble
         value: int32
 
-proc insertAfter(node: Marble, value: int) {.inline.} =
-    var newNode = cast[Marble](alloc0(sizeof(Marble)))
+const
+    MarbleSize = sizeof(uint) + sizeof(int32)
+
+proc addressOf(memory: pointer, marbleNumber: int): Marble {.inline.} =
+    cast[Marble](cast[uint](memory) + cast[uint](marbleNumber * MarbleSize))
+
+proc insertAfter(node: Marble, memory: pointer, value: int) {.inline.} =
+    var newNode = memory.addressOf(value)
     newNode.value = cast[int32](value)
     newNode.next = node.next
     node.next = newNode
@@ -19,8 +25,8 @@ proc insertAfter(node: Marble, value: int) {.inline.} =
 proc removeNext(node: Marble) {.inline.} =
     node.next = node.next.next
 
-proc newSingleNode(value: int): Marble =
-    result = cast[Marble](alloc0(sizeof(Marble)))
+proc newSingleNode(memory: pointer, value: int): Marble =
+    result = memory.addressOf(value)
     result.value = cast[int32](value)
     result.next = result
 
@@ -39,14 +45,17 @@ if not input.scanf("$i players; last marble is worth $i points", players, marble
 # the next few moves. This saves a 64 bit memory allocation per marble, which
 # gives a small but noticable speed bump.
 
+let
+    hundredMarbles = marbles * 100
+    memory = alloc(MarbleSize * hundredMarbles)
+
 var
     player = 0
     scores = newSeq[int](players)
-    current = newSingleNode(0)
+    current = newSingleNode(memory, 0)
     currentTrail = current
     currentTrailDrift = 0
     specialCountdown = 23
-    hundredMarbles = marbles * 100
 
 for i in 1 .. hundredMarbles:
     # Instead of testing each marble number to see if it's a multiple of 23, we
@@ -63,7 +72,7 @@ for i in 1 .. hundredMarbles:
         currentTrailDrift = 0
         specialCountdown = 23
     else:
-        current.next.insertAfter(i)
+        current.next.insertAfter(memory, i)
         current = current.next.next
         if currentTrailDrift == 8:
             currentTrail = currentTrail.next.next
