@@ -16,11 +16,12 @@ const
 proc addressOf(memory: pointer, marbleNumber: int): Marble {.inline.} =
     cast[Marble](cast[uint](memory) + cast[uint](marbleNumber * MarbleSize))
 
-proc insertAfter(node: Marble, memory: pointer, value: int) {.inline.} =
+proc insertAfter(node: Marble, memory: pointer, value: int): Marble {.inline.} =
     var newNode = memory.addressOf(value)
     newNode.value = cast[int32](value)
     newNode.next = node.next
     node.next = newNode
+    newNode
 
 proc removeNext(node: Marble) {.inline.} =
     node.next = node.next.next
@@ -72,12 +73,14 @@ for i in 1 .. hundredMarbles:
         currentTrailDrift = 0
         specialCountdown = 23
     else:
-        current.next.insertAfter(memory, i)
-        current = current.next.next
-        if currentTrailDrift == 8:
-            currentTrail = currentTrail.next.next
+        current = current.next.insertAfter(memory, i)
+        if i > 8:
+            if currentTrailDrift == 8:
+                currentTrail = currentTrail.next.next
+            else:
+                currentTrailDrift += 2
         else:
-            currentTrailDrift += 2
+            currentTrail = current
 
     if i == marbles or i == hundredMarbles:
         echo scores.max
