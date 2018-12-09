@@ -1,23 +1,30 @@
-import lists, strscans, strutils
+import strscans
 
-func insertAfter(node: DoublyLinkedNode[int], value: int) =
-    var newNode = newDoublyLinkedNode(value)
+type
+    Marble = ref object
+        next, prev: Marble
+        value: int
+
+func insertAfter(node: Marble, value: int) {.inline.} =
+    var newNode = new(Marble)
+    newNode.value = value
     newNode.next = node.next
     newNode.prev = node
     newNode.next.prev = newNode
     newNode.prev.next = newNode
 
-func remove(node: DoublyLinkedNode[int]) =
+func remove(node: Marble) {.inline.} =
     node.prev.next = node.next
     node.next.prev = node.prev
 
-func newSingleNode(value: int): DoublyLinkedNode[int] =
-    result = newDoublyLinkedNode(value)
+func newSingleNode(value: int): Marble =
+    result = new(Marble)
+    result.value = value
     result.next = result
     result.prev = result
 
 var
-    input = readFile("data/09.txt").strip
+    input = readFile("data/09.txt")
     players: int
     marbles: int
 
@@ -28,9 +35,14 @@ var
     player = 0
     scores = newSeq[int](players)
     current = newSingleNode(0)
+    specialCountdown = 23
+    hundredMarbles = marbles * 100
 
-for i in 1..marbles*100:
-    if i mod 23 == 0:
+for i in 1 .. hundredMarbles:
+    specialCountdown.dec
+    if specialCountdown == 0:
+        specialCountdown = 23
+        player = (player + 23) mod players
         current = current.prev.prev.prev.prev.prev.prev.prev
         scores[player] += i + current.value
         current.remove
@@ -39,7 +51,5 @@ for i in 1..marbles*100:
         current.next.insertAfter(i)
         current = current.next.next
 
-    player = (player + 1) mod players
-
-    if i == marbles or i == marbles * 100:
+    if i == marbles or i == hundredMarbles:
         echo scores.max
