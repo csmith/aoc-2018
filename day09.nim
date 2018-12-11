@@ -8,17 +8,18 @@ import strscans
 type
     Marble = ptr object
         next: Marble
-        value: int32
 
 const
-    MarbleSize = sizeof(uint) + sizeof(int32)
+    MarbleSize = sizeof(pointer)
 
 proc addressOf(memory: pointer, marbleNumber: int): Marble {.inline.} =
     cast[Marble](cast[uint](memory) + cast[uint](marbleNumber * MarbleSize))
 
+proc valueOf(memory: pointer, marble: Marble): int {.inline.} =
+    cast[int](cast[uint](marble) - cast[uint](memory)) div MarbleSize
+
 proc insertAfter(node: Marble, memory: pointer, value: int): Marble {.inline.} =
     var newNode = memory.addressOf(value)
-    newNode.value = cast[int32](value)
     newNode.next = node.next
     node.next = newNode
     newNode
@@ -28,7 +29,6 @@ proc removeNext(node: Marble) {.inline.} =
 
 proc newSingleNode(memory: pointer, value: int): Marble =
     result = memory.addressOf(value)
-    result.value = cast[int32](value)
     result.next = result
 
 var
@@ -66,7 +66,7 @@ for i in 1 .. hundredMarbles:
         # The current player is only relevant when a 23nth marble is played, so
         # we can just update the player here instead of every turn.
         player = (player + 23) mod players
-        scores[player] += i + currentTrail.next.value
+        scores[player] += i + memory.valueOf(currentTrail.next)
         currentTrail.removeNext
         current = currentTrail.next
         currentTrail = current
