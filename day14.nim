@@ -7,7 +7,7 @@ let
     inputInt = input.parseInt
 
 var
-    scores = newSeq[int](100_000_000)  # Arbitrary large preallocation
+    scores: array[50_000_000, int]  # Arbitrary large preallocation
     size = 2
     elf1 = 0
     elf2 = 1
