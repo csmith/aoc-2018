@@ -74,7 +74,7 @@ for line in readFile("data/16.txt").splitlines:
                     opMappings[opcode] = ops[index]
         step = -1
     
-    if step == -1:
+    if step == -1 and line.len > 5:
         registers.execute(line.toInstr, opMappings)
 
 echo threeOrMore
