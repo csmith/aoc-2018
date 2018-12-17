@@ -91,9 +91,8 @@ proc flowDown(grid: TableRef[Point, GroundType], point: Point): bool =
 # still water, and we return true so that the row above us flows out.
 #
 # Sides that aren't enclosed are flowed down. In complex shapes these
-# may fill up areas below them. Where both sides fill up, or one side
-# is enclosed and the other fills up, we recursively call ourselves
-# to deal with the new situation.
+# may fill up areas below them. Where either side fills up, we
+# recursively call ourselves to deal with the new situation.
 #
 # Finally, in other cases the cells inbetween the extents become
 # flowing water and we return false.
@@ -116,7 +115,7 @@ proc flowOut(grid: TableRef[Point, GroundType], point: Point): bool =
     if not right.enclosed:
         rightFilled = grid.flowDown((right.last, point.y + 1))
     
-    if (left.enclosed or leftFilled) and (right.enclosed or rightFilled):
+    if leftFilled or rightFilled:
         # We've filled in some holes and now our extents are no longer
         # valid. Recursively call ourselves to figure out what's what.
         return flowOut(grid, point)
