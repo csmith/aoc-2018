@@ -1,32 +1,32 @@
 #ip 2
-seti 123 0 1            # r1 = 123        <-\
-bani 1 456 1            # r1 = r1 and 456   | F
-eqri 1 72 1             # r1 = r1 == 72  ---+
-addr 1 2 2              # jmp r1            | T
-seti 0 0 2              # jmp @1            |
-seti 0 9 1              # r1 = 0          <-/
-bori 1 65536 4          # r4 = r1 or 65536  <------------------\
-seti 16298264 8 1       # r1 = 16298264                        |
-bani 4 255 5            # r5 = r4 and 255    <------\          |
-addr 1 5 1              # r1 = r1 + r5              |          |
-bani 1 16777215 1       # r1 = r1 and 16777215      |          |
-muli 1 65899 1          # r1 = r1 * 65899           |          |
-bani 1 16777215 1       # r1 = r1 and 16777215      |          |
-gtir 256 4 5            # r5 = 256 > r4  -----------------\    |
-addr 5 2 2              # jmp @r5                   |     |    |
-addi 2 1 2              # jmp 1                     |     |    |
-seti 27 1 2             # jmp @28                   |  F  |    |
-seti 0 3 5              # r5 = 0          <---------------+    |
-addi 5 1 3              # r3 = r5 + 1               |     | T  |
-muli 3 256 3            # r3 = r3 * 256             |     |    |
-gtrr 3 4 3              # r3 = r3 > r4              |     |    |
-addr 3 2 2              # jmp @r3          ----\    |     |    |
-addi 2 1 2              # jmp 1                |    |     |    |
-seti 25 4 2             # jmp @26            F |    |     |    |
-addi 5 1 5              # r5 = r5 + 1      <---+    |     |    |
-seti 17 1 2             # jmp @18            T |    |     |    |
-setr 5 3 4              # r4 = r5          <---/    |     |    |
-seti 7 7 2              # jmp @8        ------------/     |    | F
-eqrr 1 0 5              # r5 = r1 == r0                   \----+
-addr 5 2 2              # jmp @r5                              | T
-seti 5 3 2              # jmp @6                               v 
+seti 123 0 1
+bani 1 456 1
+eqri 1 72 1
+addr 1 2 2
+seti 0 0 2
+seti 0 9 1
+bori 1 65536 4
+seti 16298264 8 1
+bani 4 255 5
+addr 1 5 1
+bani 1 16777215 1
+muli 1 65899 1
+bani 1 16777215 1
+gtir 256 4 5
+addr 5 2 2
+addi 2 1 2
+seti 27 1 2
+seti 0 3 5
+addi 5 1 3
+muli 3 256 3
+gtrr 3 4 3
+addr 3 2 2
+addi 2 1 2
+seti 25 4 2
+addi 5 1 5
+seti 17 1 2
+setr 5 3 4
+seti 7 7 2
+eqrr 1 0 5
+addr 5 2 2
+seti 5 3 2
