@@ -26,8 +26,8 @@ var
     dangerSum = 0
 
 # Add arbitrary extension to allow for a bit of overshooting.
-for y in 0..target.y + 20:
-    for x in 0..target.x + 20:
+for y in 0..target.y + 75:
+    for x in 0..target.x + 75:
         let
             geoindex = if (x == 0 and y == 0) or (x, y) == target:
                     0
