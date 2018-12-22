@@ -90,18 +90,21 @@ while not distances.hasKey(targetNode):
     
     distances[node] = distance
 
-    # At each node we can switch tools once, with a cost of 7 minutes
-    for tool in tools[erosions[node.pos] mod 3]:
-        if tool != node.tool and not distances.hasKey((node.pos, tool)):
-            stack.insert(((node.pos, tool)), distance + 7)
-
     # Up to four possible moves from the current node, depending on
     # terrain and tools.
     for newPos in node.pos.moves:
-        if erosions.hasKey(newPos) and
-                node.tool in tools[erosions[newPos] mod 3] and
-                not distances.hasKey((newPos, node.tool)):
-            stack.insert(((newPos, node.tool)), distance + 1)
+        if erosions.hasKey(newPos) and not distances.hasKey((newPos, node.tool)):
+            let targetTools = tools[erosions[newPos] mod 3]
+            if node.tool in targetTools:
+                # We have a tool that lets us pass, there's no point trying to
+                # swap.
+                stack.insert(((newPos, node.tool)), distance + 1)
+            else:
+                # See if we can switch to a compatible tool and treat it as
+                # a single step.
+                for newTool in targetTools:
+                    if newTool in tools[erosions[node.pos] mod 3]:
+                        stack.insert(((newPos, newTool)), distance + 8)
 
 echo dangerSum
 echo distances[targetNode]
